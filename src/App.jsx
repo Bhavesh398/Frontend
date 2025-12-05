@@ -48,7 +48,8 @@ function App() {
     if (backendBase) {
       const isHttps = backendBase.startsWith('https://');
       const wsProto = isHttps ? 'wss://' : 'ws://';
-      const noProto = backendBase.replace(/^https?:\/\//, '');
+      // Remove trailing slash and protocol to avoid double slashes
+      const noProto = backendBase.replace(/^https?:\/\//, '').replace(/\/$/, '');
       url = wsProto + noProto + '/api/ws/risks';
     } else {
       const backendPort = import.meta.env.VITE_BACKEND_PORT || '8000';
