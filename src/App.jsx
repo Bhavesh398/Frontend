@@ -41,9 +41,17 @@ function App() {
       wsRef.current.close();
       wsRef.current = null;
     }
-    // Robust WebSocket URL construction:
-    // Prefer explicit backend base via env, else derive from current host replacing Vite dev port with backend port 8000.
+    
+    // Skip WebSocket on Vercel (serverless doesn't support persistent connections)
     const backendBase = import.meta.env.VITE_BACKEND_BASE_URL || null;
+    const isVercelBackend = backendBase?.includes('vercel.app');
+    
+    if (isVercelBackend) {
+      console.log('⚠️ WebSocket disabled on Vercel serverless backend');
+      return;
+    }
+    
+    // Robust WebSocket URL construction for non-Vercel deployments
     let url;
     if (backendBase) {
       const isHttps = backendBase.startsWith('https://');
